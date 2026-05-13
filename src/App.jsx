@@ -3,6 +3,7 @@ import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
 import Sustainability from "./pages/Sustainability";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Sidebar from "./components/common/Sidebar";
 import Header from "./components/common/Header";
 import { AuthProvider } from "./auth/AuthContext";
@@ -14,7 +15,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
-
+          <Route path="/register" element={<Register />} />
           <Route
             path="/*"
             element={

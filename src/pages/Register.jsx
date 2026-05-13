@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 import {
@@ -11,7 +11,7 @@ import {
   Card
 } from "react-bootstrap";
 
-const Login = () => {
+const Register = () => {
 
   const navigate = useNavigate();
 
@@ -19,43 +19,30 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm({
-    mode: "onBlur"
-  });
+  } = useForm();
 
   const onSubmit = async (data) => {
 
     try {
 
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
+      await axios.post(
+        "http://127.0.0.1:5000/api/auth/register",
         {
+          username: data.username,
           email: data.email,
           password: data.password
         }
       );
 
-      // Save token
-      localStorage.setItem(
-        "token",
-        res.data.token
-      );
+      alert("Registration Successful");
 
-      // Save user data
-      localStorage.setItem(
-        "user",
-        JSON.stringify(res.data.user)
-      );
-
-      alert("Login Successful");
-
-      navigate("/");
+      navigate("/login");
 
     } catch (error) {
 
       alert(
         error.response?.data?.message ||
-        "Login Failed"
+        "Registration Failed"
       );
 
     }
@@ -63,23 +50,44 @@ const Login = () => {
   };
 
   return (
+
     <Container className="d-flex justify-content-center align-items-center vh-100">
 
       <Row>
         <Col>
 
           <Card
-            style={{ width: "22rem" }}
+            style={{ width: "24rem" }}
             className="shadow"
           >
 
             <Card.Body>
 
               <h3 className="text-center mb-4">
-                Login
+                Register
               </h3>
 
               <Form onSubmit={handleSubmit(onSubmit)}>
+
+                {/* Username */}
+                <Form.Group className="mb-3">
+
+                  <Form.Label>Username</Form.Label>
+
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter username"
+
+                    {...register("username", {
+                      required: "Username required"
+                    })}
+                  />
+
+                  <p className="text-danger">
+                    {errors.username?.message}
+                  </p>
+
+                </Form.Group>
 
                 {/* Email */}
                 <Form.Group className="mb-3">
@@ -89,21 +97,15 @@ const Login = () => {
                   <Form.Control
                     type="email"
                     placeholder="Enter email"
-                    isInvalid={!!errors.email}
 
                     {...register("email", {
-                      required: "Email is required",
-
-                      pattern: {
-                        value: /^\S+@\S+$/i,
-                        message: "Invalid email format"
-                      }
+                      required: "Email required"
                     })}
                   />
 
-                  <Form.Control.Feedback type="invalid">
+                  <p className="text-danger">
                     {errors.email?.message}
-                  </Form.Control.Feedback>
+                  </p>
 
                 </Form.Group>
 
@@ -115,11 +117,9 @@ const Login = () => {
                   <Form.Control
                     type="password"
                     placeholder="Enter password"
-                    isInvalid={!!errors.password}
 
                     {...register("password", {
-                      required: "Password is required",
-
+                      required: "Password required",
                       minLength: {
                         value: 6,
                         message: "Minimum 6 characters"
@@ -127,27 +127,27 @@ const Login = () => {
                     })}
                   />
 
-                  <Form.Control.Feedback type="invalid">
+                  <p className="text-danger">
                     {errors.password?.message}
-                  </Form.Control.Feedback>
+                  </p>
 
                 </Form.Group>
 
                 <Button type="submit" className="w-100">
-                  Login
+                  Register
                 </Button>
 
-                <div className="text-center mt-3">
-
-                    Don't have an account?
-
-                    <a href="/register">
-                      Register
-                    </a>
-
-                </div>
-
               </Form>
+
+              <div className="text-center mt-3">
+
+                Already have account?
+
+                <Link to="/login">
+                  Login
+                </Link>
+
+              </div>
 
             </Card.Body>
 
@@ -157,7 +157,8 @@ const Login = () => {
       </Row>
 
     </Container>
+
   );
 };
 
-export default Login;
+export default Register;
